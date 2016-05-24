@@ -28,17 +28,22 @@
         android:layout_centerHorizontal="true"
         android:textStyle=""/>
 
-
-    <TextView
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="GPS"
-        android:textSize="30dp"
+        android:src="@drawable/gpsoff"
         android:id="@+id/gps"
+        android:maxWidth="50dip"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds ="true"
         android:layout_below="@+id/my_toolbar"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:padding="16dp"/>
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        />
 
     <Button
         android:layout_width="wrap_content"

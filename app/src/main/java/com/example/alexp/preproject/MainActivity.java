@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private float km;
     private Thread t;
     boolean detenido;
-    private TextView lblGPS;
+    private ImageView lblGPS;
 
 
     @Override
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         View btnInicio = findViewById(R.id.inicio);
         View btnDetener = findViewById(R.id.detener);
         lblVel = (TextView) findViewById(R.id.vel);
-        lblGPS = (TextView) findViewById(R.id.gps);
+        lblGPS = (ImageView) findViewById(R.id.gps);
 
         prepararGPS();
 
@@ -107,12 +107,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onProviderEnabled(String provider) {
-                lblGPS.setTextColor(Color.GREEN);
+                lblGPS.setImageResource(R.drawable.gpson);
             }
 
             @Override
             public void onProviderDisabled(String provider) {
-                lblGPS.setTextColor(Color.RED);
+                lblGPS.setImageResource(R.drawable.gpsoff);
 
             }
         };
@@ -258,9 +258,9 @@ public class MainActivity extends AppCompatActivity {
     public void prepararGPS(){
         locManager= (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            lblGPS.setTextColor(Color.GREEN);
+            lblGPS.setImageResource(R.drawable.gpson);
         }else{
-            lblGPS.setTextColor(Color.RED);
+            lblGPS.setImageResource(R.drawable.gpsoff);
         }
     }
 
