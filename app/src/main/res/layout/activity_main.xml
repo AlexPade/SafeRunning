@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingBottom="16dp"
+    tools:context="com.example.alexp.preproject.MainActivity"
+    >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        android:layout_alignParentTop="true" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/inicio"
+        android:drawableLeft="@drawable/ic_directions_run_white_24dp"
+        android:text="iniciar actividad"
+        android:drawablePadding="8px"
+        android:layout_above="@+id/detener"
+        android:layout_centerHorizontal="true"
+        android:textStyle=""/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GPS"
+        android:textSize="30dp"
+        android:id="@+id/gps"
+        android:layout_below="@+id/my_toolbar"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:padding="16dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_pan_tool_white_24dp"
+        android:drawablePadding="8px"
+        android:text="Detener"
+        android:id="@+id/detener"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/inicio"
+        android:layout_alignEnd="@+id/inicio"
+        android:layout_alignLeft="@+id/inicio"
+        android:layout_alignStart="@+id/inicio"
+        />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:id="@+id/linearLayout"
+
+        android:layout_below="@+id/gps"
+        android:layout_centerHorizontal="true">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0 KM/H"
+                android:textSize="20dp"
+                android:padding="20dp"
+                android:id="@+id/vel"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="30dp"
+                android:text="Velocidad"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="attr"
+                android:textSize="20dp"
+                android:padding="20dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="otro atributo"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/linearLayout"
+        android:layout_above="@+id/inicio"
+        android:layout_alignRight="@+id/linearLayout"
+        android:layout_alignEnd="@+id/linearLayout"
+        android:layout_alignLeft="@+id/inicio"
+        android:layout_alignStart="@+id/inicio"
+        android:id="@+id/linearLayout2">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:layout_gravity="center">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/rojo"
+                android:id="@+id/ledRojo"
+                android:maxWidth="20dip"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds ="true"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/amarillo"
+                android:id="@+id/ledAmarillo"
+                android:maxWidth="20dip"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds ="true"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/verde"
+                android:id="@+id/ledVerde"
+                android:maxWidth="20dip"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds ="true"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:layout_gravity="center"
+            android:weightSum="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/estado"
+                android:padding="20dp"
+                android:textSize="20dp"
+                android:layout_weight="2.83" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</RelativeLayout>
