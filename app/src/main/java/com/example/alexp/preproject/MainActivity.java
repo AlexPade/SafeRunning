@@ -8,39 +8,39 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentTabHost;
 import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import java.text.DecimalFormat;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements HomeFragment.FuncionesHome {
 
     private LocationManager locManager;
     private LocationListener locListener;
+    private FragmentTabHost mTabHost;
+    private HomeFragment homeFragment;
     private float velocidad;
-    private TextView lblVel;
+    private float km;
+    private Thread t;
+    boolean detenido;
+
+    /*private TextView lblVel;
     private ImageView ledRojo;
     private ImageView ledAmarillo;
     private ImageView ledVerde;
     private TextView estado;
-    private float km;
     private Thread t;
     boolean detenido;
     private ImageView lblGPS;
-
+*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,38 +50,23 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
-
-        //Leds
-        ledRojo = (ImageView) findViewById(R.id.ledRojo);
-        ledAmarillo = (ImageView) findViewById(R.id.ledAmarillo);
-        ledVerde = (ImageView) findViewById(R.id.ledVerde);
-        estado = (TextView) findViewById(R.id.estado);
+        mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
+        mTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
 
 
-        View btnInicio = findViewById(R.id.inicio);
-        View btnDetener = findViewById(R.id.detener);
-        lblVel = (TextView) findViewById(R.id.vel);
-        lblGPS = (ImageView) findViewById(R.id.gps);
+        mTabHost.addTab(mTabHost.newTabSpec("home").setIndicator("",getResources().getDrawable(R.drawable.hometab)),
+                HomeFragment.class, null); //HomeFragment.class es el fragment atado a la pestaña "home"
+                                            //Puse en todas las pestañas homefragment para probar, pero hay que cambiarlo por el
+                                            //que corresponda cuando se creen los otros fragments
 
-        prepararGPS();
+        mTabHost.addTab(mTabHost.newTabSpec("mapa")
+                .setIndicator("",getResources().getDrawable(R.drawable.mapatab)), HomeFragment.class, null); //Cambiar homefragment
 
-        Log.d("principio", "principio");
 
-        btnInicio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                comenzarActividad();
-                comenzarControlDeVelocidad();
+        mTabHost.addTab(mTabHost.newTabSpec("ajustes")
+                .setIndicator("",getResources().getDrawable(R.drawable.ajustestab)), HomeFragment.class, null); //Cambiar homefragment
 
-            }
-        });
 
-        btnDetener.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                detenido=true;
-            }
-        });
     }
 
     @Override
@@ -90,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void comenzarActividad() {
+    public void comenzarActividad() {
         locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 
@@ -107,13 +92,14 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onProviderEnabled(String provider) {
-                lblGPS.setImageResource(R.drawable.gpson);
+                homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
+                homeFragment.cambiarLblGps(true);
             }
 
             @Override
             public void onProviderDisabled(String provider) {
-                lblGPS.setImageResource(R.drawable.gpsoff);
-
+                homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
+                homeFragment.cambiarLblGps(false);
             }
         };
 
@@ -131,12 +117,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void comenzarControlDeVelocidad(){
+    public void comenzarControlDeVelocidad(){
         t=new Thread(new Runnable() {
+
 
             @Override
             public void run() {
 
+                homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
                 int i=0;
                 detenido = false;   //actividad normal
                 boolean corriendo;          //falso cuando velocidad==0
@@ -144,7 +132,8 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        prenderColorLed("verde");
+
+                        homeFragment.prenderColorLed("verde");
                     }
                 });
                 Log.d("uno","uno");
@@ -167,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                prenderColorLed("amarillo");
+                                homeFragment.prenderColorLed("amarillo");
                             }
                         });
                         corriendo=false;
@@ -188,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        prenderColorLed("verde");
+                                        homeFragment.prenderColorLed("verde");
                                     }
                                 });                            }
                         }
@@ -199,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    prenderColorLed("rojo");
+                                    homeFragment.prenderColorLed("rojo");
                                     mandarNotificacion();
                                 }
                             });
@@ -245,11 +234,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void posicion(Location loc) {
         if(loc!=null){
+            homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
             velocidad = loc.getSpeed();
             km = velocidad*3600;
             km = km/1000;
             km=roundTwoDecimals(km);
-            lblVel.setText(String.valueOf(km)+"KM/H");
+            homeFragment.actualizarVelocidad(km);
         }else{
         }
 
@@ -257,10 +247,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void prepararGPS(){
         locManager= (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
         if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            lblGPS.setImageResource(R.drawable.gpson);
+            homeFragment.cambiarLblGps(true);
         }else{
-            lblGPS.setImageResource(R.drawable.gpsoff);
+            homeFragment.cambiarLblGps(false);
         }
     }
 
@@ -270,32 +261,7 @@ public class MainActivity extends AppCompatActivity {
         return Float.valueOf(twoDForm.format(d));
     }
 
-    private void prenderColorLed(String color){
-        if (color.equals("rojo")){ //Prendo rojo y apago amarillo y verde
-            ledRojo.setImageResource(R.drawable.rojoprendido);
-            ledAmarillo.setImageResource(R.drawable.amarillo);
-            ledVerde.setImageResource(R.drawable.verde);
-            estado.setText("PELIGRO");
-        }
-        if(color.equals("amarillo")) { //Prendo amarillo
-            ledRojo.setImageResource(R.drawable.rojo);
-            ledAmarillo.setImageResource(R.drawable.amarilloprendido);
-            ledVerde.setImageResource(R.drawable.verde);
-            estado.setText("Detenido");
-        }
-        if (color.equals("verde")){ //Prendo verde
-            ledRojo.setImageResource(R.drawable.rojo);
-            ledAmarillo.setImageResource(R.drawable.amarillo);
-            ledVerde.setImageResource(R.drawable.verdeprendido);
-            estado.setText("Corriendo");
-        }
-        if (color.equals("nada")){ //Ningun led prendido
-            ledRojo.setImageResource(R.drawable.rojo);
-            ledAmarillo.setImageResource(R.drawable.amarillo);
-            ledVerde.setImageResource(R.drawable.verde);
-            estado.setText("");
-        }
-    }
+
 
 
 }

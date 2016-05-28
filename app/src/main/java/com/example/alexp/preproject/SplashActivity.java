@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Window;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -24,6 +23,21 @@ public class SplashActivity extends Activity {
 
         setContentView(R.layout.activity_splash);
 
+        /*Timer timer = new Timer();
+
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                Intent mainIntent = new Intent().setClass(
+                        SplashActivity.this, MainActivity.class);
+                startActivity(mainIntent);
+
+                // Close the activity so the user won't able to go back this
+                // activity pressing Back button
+                finish();
+            }
+        },0,3000);*/
+
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
@@ -39,8 +53,8 @@ public class SplashActivity extends Activity {
             }
         };
 
-        // Simulate a long loading process on application startup.
         Timer timer = new Timer();
+        // Simulate a long loading process on application startup.
         timer.schedule(task, SPLASH_SCREEN_DELAY);
     }
 }
