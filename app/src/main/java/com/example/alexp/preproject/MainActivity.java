@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                                             //que corresponda cuando se creen los otros fragments
 
         mTabHost.addTab(mTabHost.newTabSpec("mapa")
-                .setIndicator("",getResources().getDrawable(R.drawable.mapatab)), HomeFragment.class, null); //Cambiar homefragment
+                .setIndicator("",getResources().getDrawable(R.drawable.mapatab)), MapsFragment.class, null); //Cambiar homefragment
 
 
         mTabHost.addTab(mTabHost.newTabSpec("ajustes")
