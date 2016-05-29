@@ -27,8 +27,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     private LocationListener locListener;
     private FragmentTabHost mTabHost;
     private HomeFragment homeFragment;
-    private float velocidad;
-    private float km;
+    private float velocidad; //En M/S
+    private float km; //Velocidad en KM/H
     private Thread t;
     boolean detenido;
 
@@ -52,8 +52,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
 
         mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         mTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
-
-
         mTabHost.addTab(mTabHost.newTabSpec("home").setIndicator("",getResources().getDrawable(R.drawable.hometab)),
                 HomeFragment.class, null); //HomeFragment.class es el fragment atado a la pestaña "home"
                                             //Puse en todas las pestañas homefragment para probar, pero hay que cambiarlo por el
@@ -231,6 +229,10 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         nm.notify(notId,builder.build());
     }
 
+    public float getKM(){
+        return km;
+    }
+
 
     private void posicion(Location loc) {
         if(loc!=null){
@@ -260,8 +262,5 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         DecimalFormat twoDForm = new DecimalFormat("#.##");
         return Float.valueOf(twoDForm.format(d));
     }
-
-
-
 
 }
