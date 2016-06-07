@@ -11,41 +11,49 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import java.text.DecimalFormat;
+import android.widget.Chronometer;
 
-public class MainActivity extends AppCompatActivity implements HomeFragment.FuncionesHome {
+import com.google.android.gms.maps.model.LatLng;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+public class MainActivity extends AppCompatActivity implements HomeFragment.FuncionesHome, MapsFragment.FuncionesMaps{
 
     private LocationManager locManager;
     private LocationListener locListener;
+    private ArrayList<LatLng> posiciones;
+
     private FragmentTabHost mTabHost;
     private HomeFragment homeFragment;
+    private MapsFragment mapsFragment;
+
     private float velocidad; //En M/S
     private float km; //Velocidad en KM/H
     private Thread t;
+    private LatLng target;
+    private boolean centrarMapa;
+    private Chronometer cronometro;
+
     boolean detenido;
 
-    /*private TextView lblVel;
-    private ImageView ledRojo;
-    private ImageView ledAmarillo;
-    private ImageView ledVerde;
-    private TextView estado;
-    private Thread t;
-    boolean detenido;
-    private ImageView lblGPS;
-*/
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        posiciones = new ArrayList<LatLng>();
+        centrarMapa = true;
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -74,13 +82,20 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     }
 
     public void comenzarActividad() {
-        locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+        locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         locListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
+                LatLng ubicacion = new LatLng(location.getLatitude(), location.getLongitude());
+                posiciones.add(ubicacion);
                 posicion(location);
+
+                mapsFragment = (MapsFragment) getSupportFragmentManager().findFragmentByTag("mapa");
+                if ((mapsFragment != null) && (mapsFragment.estadoActualizado()))
+                    mapsFragment.cambioUbicacion(ubicacion);
+
             }
 
             @Override
@@ -233,16 +248,16 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         return km;
     }
 
-
     private void posicion(Location loc) {
         if(loc!=null){
-            homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
+
             velocidad = loc.getSpeed();
             km = velocidad*3600;
             km = km/1000;
             km=roundTwoDecimals(km);
-            homeFragment.actualizarVelocidad(km);
-        }else{
+            homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
+            if (homeFragment != null)
+                homeFragment.actualizarVelocidad(km);
         }
 
     }
@@ -257,10 +272,28 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         }
     }
 
-    private float roundTwoDecimals(float d)
-    {
+    private float roundTwoDecimals(float d) {
         DecimalFormat twoDForm = new DecimalFormat("#.##");
         return Float.valueOf(twoDForm.format(d));
     }
 
+    public Iterator<LatLng> obtenerRuta(){
+        return posiciones.iterator();
+    }
+
+    public LatLng getTarget(){
+        return target;
+    }
+
+    public void setTarget(LatLng ll){
+        target = ll;
+    }
+
+    public boolean getCentrar(){
+        return centrarMapa;
+    }
+
+    public void setCentrar(boolean b){
+        centrarMapa = b;
+    }
 }
