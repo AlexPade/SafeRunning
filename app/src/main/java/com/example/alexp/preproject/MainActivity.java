@@ -281,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                 .setAutoCancel(true)
                 .setLargeIcon(bitmap)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText("Presione ESTOY BIEN para continuar, de lo contrario se enviara un SMS de alerta"))
-                .addAction(R.drawable.estoyok, "ESTOY BIEN", null)
+                //.addAction(R.drawable.estoyok, "ESTOY BIEN", null)
                 .setVibrate(new long[]{100, 250, 100, 500});
 
         nm.notify(notId,builder.build());
