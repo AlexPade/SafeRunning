@@ -1,0 +1,20 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.alexp.preproject.EstoyBien"
+    android:background="@color/primary_material_dark">
+
+
+    <Button
+        android:layout_width="259dp"
+        android:layout_height="243dp"
+        android:text="estoy bien"
+        android:textSize="30dp"
+        android:textColor="@color/primary_material_dark"
+        android:background="@drawable/roundedbutton"
+        android:id="@+id/buttonOK"
+        android:layout_gravity="center"
+        />
+
+</FrameLayout>

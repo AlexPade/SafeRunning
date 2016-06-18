@@ -1,5 +1,6 @@
 package com.example.alexp.preproject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 
 public class HomeFragment extends Fragment {
 
+    private View btnInicio;
+    private View btnDetener;
     private TextView lblVel;
     private ImageView ledRojo;
     private ImageView ledAmarillo;
@@ -22,8 +25,6 @@ public class HomeFragment extends Fragment {
     private String ledPrendido="apagados";
 
     private FuncionesHome mListener;
-
-    private MainActivity activity;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -36,16 +37,15 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        activity = (MainActivity) getActivity();
+
         //Leds
         ledRojo = (ImageView) view.findViewById(R.id.ledRojo);
         ledAmarillo = (ImageView) view.findViewById(R.id.ledAmarillo);
         ledVerde = (ImageView) view.findViewById(R.id.ledVerde);
         estado = (TextView) view.findViewById(R.id.estado);
 
-
-
-        View btnInicio = view.findViewById(R.id.inicio);
+        btnInicio = view.findViewById(R.id.inicio);
+        btnDetener = view.findViewById(R.id.detener);
         lblVel = (TextView) view.findViewById(R.id.vel);
         lblGPS = (ImageView) view.findViewById(R.id.gps);
 
@@ -56,6 +56,16 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 mListener.comenzarActividad();
                 mListener.comenzarControlDeVelocidad();
+                btnInicio.setVisibility(View.INVISIBLE);
+                btnDetener.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        btnDetener.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.detenerActividad();
 
             }
         });
@@ -95,21 +105,28 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d("Resume","Resume");
-        if(ledPrendido.equals("rojo")) {
-            ledRojo.setImageResource(R.drawable.rojoprendido);
-            estado.setText("PELIGRO");
+        String act = mListener.getEstado();
+        if(act!=null) {
+            btnInicio.setVisibility(View.INVISIBLE);
+            btnDetener.setVisibility(View.VISIBLE);
+            if (act.equals("peligro")) {
+                ledRojo.setImageResource(R.drawable.rojoprendido);
+                estado.setText("PELIGRO");
+            }else
+                if (act.equals("detenido")) {
+                    ledAmarillo.setImageResource(R.drawable.amarilloprendido);
+                    estado.setText("Detenido");
+                }else
+                    if (act.equals("corriendo")) {
+                    ledVerde.setImageResource(R.drawable.verdeprendido);
+                    estado.setText("Corriendo");
+                    }else{
+                        btnDetener.setVisibility(View.INVISIBLE);
+                        btnInicio.setVisibility(View.VISIBLE);
+                    }
         }
-        if(ledPrendido.equals("amarillo")) {
-            ledAmarillo.setImageResource(R.drawable.amarilloprendido);
-            estado.setText("Detenido");
-        }
-        if(ledPrendido.equals("verde")) {
-            ledVerde.setImageResource(R.drawable.verdeprendido);
-            estado.setText("Corriendo");
-        }
-        float kms;
-        kms = activity.getKM();
-        lblVel.setText(String.valueOf(kms)+"KM/H");
+
+        lblVel.setText(String.valueOf(mListener.getKM())+"KM/H");
 
 
     }
@@ -132,6 +149,17 @@ public class HomeFragment extends Fragment {
         super.onStop();
         Log.d("stop","stop");
 
+    }
+
+    public void cambiarBoton(){
+        btnInicio.setVisibility(View.VISIBLE);
+        btnDetener.setVisibility(View.INVISIBLE);
+        btnDetener.setEnabled(true);
+
+    }
+
+    public void noClickeableDetener(){
+        btnDetener.setEnabled(false);
     }
 
     public void cambiarLblGps(boolean prendido){
@@ -180,5 +208,8 @@ public class HomeFragment extends Fragment {
         void comenzarActividad();
         void comenzarControlDeVelocidad();
         void prepararGPS();
+        void detenerActividad();
+        float getKM();
+        String getEstado();
     }
 }

@@ -16,6 +16,19 @@
         android:paddingRight="10dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/detener"
+        android:drawableLeft="@drawable/ic_pan_tool_white_24dp"
+        android:text="detener "
+        android:drawablePadding="8px"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/inicio"
+        android:layout_alignEnd="@+id/inicio"
+        android:layout_alignLeft="@+id/inicio"
+        android:layout_alignStart="@+id/inicio"
+        android:visibility="invisible"/>
 
     <ImageView
         android:layout_width="wrap_content"

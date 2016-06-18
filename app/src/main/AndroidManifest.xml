@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:allowBackup="true"
@@ -24,7 +26,8 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"></activity>
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -36,7 +39,8 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="AIzaSyCtkNn19ecQ_mjvsTjuoFfMmsYuwQS01nE" />
+
 
     </application>
 
