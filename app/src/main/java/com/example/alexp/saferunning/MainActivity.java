@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -18,14 +19,19 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.telephony.SmsManager;
 import android.view.Menu;
 import android.widget.Chronometer;
 
+import com.google.android.gms.identity.intents.Address;
 import com.google.android.gms.maps.model.LatLng;
 
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.ArrayList;
@@ -50,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     boolean detenido;
     boolean presionado;
     boolean notificationFlag;
+    boolean gpsActivado;
     NotificationManager nm;
 
 
@@ -81,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
 
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.action_bar,menu);
@@ -89,50 +97,56 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
 
     public void comenzarActividad() {
 
-        locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if(gpsActivado) {
 
-        locListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                LatLng ubicacion = new LatLng(location.getLatitude(), location.getLongitude());
-                posiciones.add(ubicacion);
-                posicion(location);
+            locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-                mapsFragment = (MapsFragment) getSupportFragmentManager().findFragmentByTag("mapa");
-                if ((mapsFragment != null) && (mapsFragment.estadoActualizado()))
-                    mapsFragment.cambioUbicacion(ubicacion);
+            locListener = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    LatLng ubicacion = new LatLng(location.getLatitude(), location.getLongitude());
+                    posiciones.add(ubicacion);
+                    posicion(location);
 
+                    mapsFragment = (MapsFragment) getSupportFragmentManager().findFragmentByTag("mapa");
+                    if ((mapsFragment != null) && (mapsFragment.estadoActualizado()))
+                        mapsFragment.cambioUbicacion(ubicacion);
+
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+                    homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
+                    homeFragment.cambiarLblGps(true);
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+                    homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
+                    homeFragment.cambiarLblGps(false);
+                }
+            };
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
             }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-                homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
-                homeFragment.cambiarLblGps(true);
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
-                homeFragment.cambiarLblGps(false);
-            }
-        };
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
+        }else{
+            Toast toast = Toast.makeText(getApplicationContext(),"El GPS esta desactivado",Toast.LENGTH_LONG);
+            toast.show();
         }
-        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
 
     }
 
@@ -292,6 +306,23 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
 
     }
 
+    public String getDireccion(Location loc) { //Obtener la direccion de la calle a partir de la latitud y la longitud
+        String toReturn="";
+        if (loc!=null) {
+            try {
+                Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+                List<android.location.Address> list = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+                if (!list.isEmpty()) {
+                    android.location.Address address = list.get(0);
+                    toReturn= address.getAddressLine(0);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return toReturn;
+    }
+
     private void setVelocidad(float v){
         velocidad=v;
         setKm(roundTwoDecimals((velocidad*3600)/1000));
@@ -393,23 +424,18 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     }
 
     public void mandarSMS(){
-     /*   SmsManager sms = SmsManager.getDefault();
+        SmsManager sms = SmsManager.getDefault();
         String numero="";
-        String mensaje="test";
+        Location loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        String coordenadas=getCoordenadas(loc);
+        String direccion=getDireccion(loc);
+        String mensaje="ALERTA: Necesito ayuda en "+direccion+" "+coordenadas;
+
         sms.sendTextMessage(numero,null,mensaje,null,null);
         Toast toast = Toast.makeText(getApplicationContext(),"MENSAJE ENVIADO",Toast.LENGTH_LONG);
-        toast.show();*/
+        toast.show();
     }
 
-    /*public void prepararGPS(){
-        locManager= (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
-        if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            homeFragment.cambiarLblGps(true);
-        }else{
-            homeFragment.cambiarLblGps(false);
-        }
-    }*/
 
     private float roundTwoDecimals(float d) {
         DecimalFormat twoDForm = new DecimalFormat("#.##");
@@ -420,6 +446,36 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     public void botonPresionado() {
         presionado=true;
 
+    }
+
+    public void comenzarControlGPS() {
+        locManager= (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
+        Timer timer = new Timer();
+
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+
+                if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            homeFragment.cambiarLblGps(true);
+                            gpsActivado=true;
+                        }
+                    });
+                }else{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            homeFragment.cambiarLblGps(false);
+                            gpsActivado=false;
+                        }
+                    });
+                }
+            }
+        },0,1000);
     }
 
     @Override
@@ -450,5 +506,20 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
 
     public void setCentrar(boolean b){
         centrarMapa = b;
+    }
+
+    public boolean getGpsActivado (){
+        return gpsActivado;
+    }
+
+    public String getCoordenadas(Location loc) {
+        String toReturn="";
+        if(loc!=null){
+            float lat = roundTwoDecimals((float) loc.getLatitude());
+            float lon = roundTwoDecimals((float) loc.getLongitude());
+            toReturn = "Lat: "+lat+"Lon: "+lon;
+        }
+
+        return toReturn;
     }
 }

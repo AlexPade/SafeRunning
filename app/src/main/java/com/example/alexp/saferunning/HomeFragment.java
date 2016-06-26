@@ -52,9 +52,11 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mListener.comenzarActividad();
-                mListener.comenzarControlDeVelocidad();
-                btnInicio.setVisibility(View.INVISIBLE);
-                btnDetener.setVisibility(View.VISIBLE);
+                if(mListener.getGpsActivado()) {
+                    mListener.comenzarControlDeVelocidad();
+                    btnInicio.setVisibility(View.INVISIBLE);
+                    btnDetener.setVisibility(View.VISIBLE);
+                }
 
             }
         });
@@ -66,6 +68,8 @@ public class HomeFragment extends Fragment {
 
             }
         });
+
+        mListener.comenzarControlGPS();
 
 
         return view;
@@ -202,9 +206,10 @@ public class HomeFragment extends Fragment {
     public interface FuncionesHome{
         void comenzarActividad();
         void comenzarControlDeVelocidad();
-        //void prepararGPS();
+        void comenzarControlGPS();
         void detenerActividad();
         float getKM();
         String getEstado();
+        boolean getGpsActivado();
     }
 }
