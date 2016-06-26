@@ -1,6 +1,5 @@
-package com.example.alexp.preproject;
+package com.example.alexp.saferunning;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -49,8 +48,6 @@ public class HomeFragment extends Fragment {
         lblVel = (TextView) view.findViewById(R.id.vel);
         lblGPS = (ImageView) view.findViewById(R.id.gps);
 
-        mListener.prepararGPS();
-
         btnInicio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,7 +75,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d("asd","ASDSAD");
         outState.putInt("flag",1);
     }
 
@@ -104,22 +100,21 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("Resume","Resume");
         String act = mListener.getEstado();
         if(act!=null) {
             btnInicio.setVisibility(View.INVISIBLE);
             btnDetener.setVisibility(View.VISIBLE);
             if (act.equals("peligro")) {
                 ledRojo.setImageResource(R.drawable.rojoprendido);
-                estado.setText("PELIGRO");
+                estado.setText(R.string.danger);
             }else
                 if (act.equals("detenido")) {
                     ledAmarillo.setImageResource(R.drawable.amarilloprendido);
-                    estado.setText("Detenido");
+                    estado.setText(R.string.stopped);
                 }else
                     if (act.equals("corriendo")) {
                     ledVerde.setImageResource(R.drawable.verdeprendido);
-                    estado.setText("Corriendo");
+                    estado.setText(R.string.moving);
                     }else{
                         btnDetener.setVisibility(View.INVISIBLE);
                         btnInicio.setVisibility(View.VISIBLE);
@@ -178,21 +173,21 @@ public class HomeFragment extends Fragment {
             ledRojo.setImageResource(R.drawable.rojoprendido);
             ledAmarillo.setImageResource(R.drawable.amarillo);
             ledVerde.setImageResource(R.drawable.verde);
-            estado.setText("PELIGRO");
+            estado.setText(R.string.danger);
             ledPrendido = "rojo";
         }
         if(color.equals("amarillo")) { //Prendo amarillo
             ledRojo.setImageResource(R.drawable.rojo);
             ledAmarillo.setImageResource(R.drawable.amarilloprendido);
             ledVerde.setImageResource(R.drawable.verde);
-            estado.setText("Detenido");
+            estado.setText(R.string.stopped);
             ledPrendido = "amarillo";
         }
         if (color.equals("verde")){ //Prendo verde
             ledRojo.setImageResource(R.drawable.rojo);
             ledAmarillo.setImageResource(R.drawable.amarillo);
             ledVerde.setImageResource(R.drawable.verdeprendido);
-            estado.setText("Corriendo");
+            estado.setText(R.string.moving);
             ledPrendido = "verde";
         }
         if (color.equals("nada")){ //Ningun led prendido
@@ -207,7 +202,7 @@ public class HomeFragment extends Fragment {
     public interface FuncionesHome{
         void comenzarActividad();
         void comenzarControlDeVelocidad();
-        void prepararGPS();
+        //void prepararGPS();
         void detenerActividad();
         float getKM();
         String getEstado();

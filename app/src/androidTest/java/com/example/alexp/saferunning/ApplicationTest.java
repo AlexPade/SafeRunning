@@ -1,4 +1,4 @@
-package com.example.alexp.preproject;
+package com.example.alexp.saferunning;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

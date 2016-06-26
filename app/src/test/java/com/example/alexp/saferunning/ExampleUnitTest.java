@@ -1,4 +1,4 @@
-package com.example.alexp.preproject;
+package com.example.alexp.saferunning;
 
 import org.junit.Test;
 

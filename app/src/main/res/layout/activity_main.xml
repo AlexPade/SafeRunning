@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingBottom="16dp"
-    tools:context="com.example.alexp.preproject.MainActivity">
+    tools:context="com.example.alexp.saferunning.MainActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"

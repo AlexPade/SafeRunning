@@ -1,4 +1,4 @@
-package com.example.alexp.preproject;
+package com.example.alexp.saferunning;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -30,7 +30,6 @@ public class MapsFragment extends Fragment {
     //ATRIBUTOS
     private MapView mapView;
     private GoogleMap mMap;
-    private FloatingActionButton actividadBoton;
     private FuncionesMaps listener;
 
     private PolylineOptions ruta;
@@ -52,6 +51,7 @@ public class MapsFragment extends Fragment {
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        FloatingActionButton actividadBoton;
 
         //Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_maps, container, false);

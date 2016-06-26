@@ -1,7 +1,6 @@
-package com.example.alexp.preproject;
+package com.example.alexp.saferunning;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,10 +9,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 
-public class EstoyBien extends Fragment {
+public class EstoyBienFragment extends Fragment {
     public estoyBienListener mListener;
 
-    public EstoyBien() {
+    public EstoyBienFragment() {
         // Required empty public constructor
     }
 

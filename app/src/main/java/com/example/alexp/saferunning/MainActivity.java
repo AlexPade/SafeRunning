@@ -1,7 +1,6 @@
-package com.example.alexp.preproject;
+package com.example.alexp.saferunning;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -12,7 +11,6 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTabHost;
@@ -20,8 +18,6 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.telephony.SmsManager;
-import android.util.Log;
 import android.view.Menu;
 import android.widget.Chronometer;
 
@@ -35,20 +31,18 @@ import java.util.TimerTask;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class MainActivity extends AppCompatActivity implements HomeFragment.FuncionesHome, EstoyBien.estoyBienListener, MapsFragment.FuncionesMaps {
+public class MainActivity extends AppCompatActivity implements HomeFragment.FuncionesHome, EstoyBienFragment.estoyBienListener, MapsFragment.FuncionesMaps {
 
     private LocationManager locManager;
     private LocationListener locListener;
     private ArrayList<LatLng> posiciones;
 
-    private FragmentTabHost mTabHost;
     private HomeFragment homeFragment;
     private String estado;
     private MapsFragment mapsFragment;
 
     private float velocidad; //En M/S
     private float km; //Velocidad en KM/H
-    private Thread t;
     private LatLng target;
     private boolean centrarMapa;
     private Chronometer cronometro;
@@ -58,19 +52,10 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     boolean notificationFlag;
     NotificationManager nm;
 
-    /*private TextView lblVel;
-    private ImageView ledRojo;
-    private ImageView ledAmarillo;
-    private ImageView ledVerde;
-    private TextView estado;
-    private Thread t;
-    boolean detenido;
-    private ImageView lblGPS;
-*/
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        FragmentTabHost mTabHost;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         posiciones = new ArrayList<LatLng>();
@@ -83,16 +68,14 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         mTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
 
         mTabHost.addTab(mTabHost.newTabSpec("home").setIndicator("", getResources().getDrawable(R.drawable.hometab)),
-                    HomeFragment.class, null); //HomeFragment.class es el fragment atado a la pestaña "home"
-        //Puse en todas las pestañas homefragment para probar, pero hay que cambiarlo por el
-        //que corresponda cuando se creen los otros fragments
+                    HomeFragment.class, null);
 
         mTabHost.addTab(mTabHost.newTabSpec("mapa")
-                .setIndicator("", getResources().getDrawable(R.drawable.mapatab)), MapsFragment.class, null); //Cambiar homefragment
+                .setIndicator("", getResources().getDrawable(R.drawable.mapatab)), MapsFragment.class, null);
 
 
         mTabHost.addTab(mTabHost.newTabSpec("ajustes")
-                .setIndicator("", getResources().getDrawable(R.drawable.ajustestab)), HomeFragment.class, null); //Cambiar homefragment
+                .setIndicator("", getResources().getDrawable(R.drawable.ajustestab)), HomeFragment.class, null);
 
 
 
@@ -154,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     }
 
     public void comenzarControlDeVelocidad(){
+        Thread t;
         t=new Thread(new Runnable() {
 
 
@@ -177,7 +161,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                     }
                 });
 
-                Log.d("uno","uno");
                 while((!detenido)&&(j<10)) {//Espero 10 segundos antes de empezar
                     try {
                         Thread.sleep(1000);
@@ -191,14 +174,12 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                 }
 
 
-                Log.d("dos","dos");
                 while((!detenido)&&(valido)){
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    Log.d("tres","tres");
                     if (velocidad==0){
                         runOnUiThread(new Runnable() {
                             @Override
@@ -211,7 +192,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                         });
                         corriendo=false;
                         while ((i<20)&&(!corriendo)&&(!detenido)){       //Repito mientras velocidad==0 durante 10 segundos
-                            Log.d("cuatro", String.valueOf(i));
                             try {
                                 Thread.sleep(500);
                             } catch (InterruptedException e) {
@@ -233,7 +213,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                                     }
                                 });                            }
                         }
-                        Log.d("siete","siete");
                         if(!corriendo&&(!detenido)){        //Si salio se salio del while sin presionar detener y la velocidad ==0 durante 10 segundos mando la notificacion
                             detenido=true;
                             //Mando notificacion
@@ -260,7 +239,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
 
         Intent i = new Intent(this, MainActivity.class);
         i.putExtra("notificacionFrag", "notificacion");
-        //i.setAction("");
         i.putExtra("NotID",notId);
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(
@@ -374,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if(presionado==false){
+                        if(!presionado){
                             //Mandar mensaje
                             Toast toast = Toast.makeText(getApplicationContext(),"mandar mensaje..",Toast.LENGTH_LONG);
                             toast.show();
@@ -423,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         toast.show();*/
     }
 
-    public void prepararGPS(){
+    /*public void prepararGPS(){
         locManager= (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
         if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
@@ -431,7 +409,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         }else{
             homeFragment.cambiarLblGps(false);
         }
-    }
+    }*/
 
     private float roundTwoDecimals(float d) {
         DecimalFormat twoDForm = new DecimalFormat("#.##");
@@ -449,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         super.onResume();
         if (notificationFlag) {
             android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            EstoyBien estoyBienFragment = new EstoyBien();
+            EstoyBienFragment estoyBienFragment = new EstoyBienFragment();
             ft.replace(android.R.id.content, estoyBienFragment).commit();
             notificationFlag=false;
         }

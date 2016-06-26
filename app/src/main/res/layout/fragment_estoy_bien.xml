@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.alexp.preproject.EstoyBien"
+    tools:context="com.example.alexp.saferunning.EstoyBien"
     android:background="@color/primary_material_dark">
 
 

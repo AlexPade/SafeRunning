@@ -1,4 +1,4 @@
-package com.example.alexp.preproject;
+package com.example.alexp.saferunning;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,11 +15,6 @@ public class SplashActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Set portrait orientation
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        // Hide title bar
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         setContentView(R.layout.activity_splash);
 
