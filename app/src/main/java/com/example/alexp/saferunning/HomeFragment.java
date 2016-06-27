@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 public class HomeFragment extends Fragment {
 
     private View btnInicio;
@@ -21,7 +20,7 @@ public class HomeFragment extends Fragment {
     private ImageView ledVerde;
     private TextView estado;
     private ImageView lblGPS;
-    private String ledPrendido="apagados";
+    private String ledPrendido = "apagados";
 
     private FuncionesHome mListener;
 
@@ -52,7 +51,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mListener.comenzarActividad();
-                if(mListener.getGpsActivado()) {
+                if (mListener.getGpsActivado()) {
                     mListener.comenzarControlDeVelocidad();
                     btnInicio.setVisibility(View.INVISIBLE);
                     btnDetener.setVisibility(View.VISIBLE);
@@ -79,9 +78,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("flag",1);
+        outState.putInt("flag", 1);
     }
-
 
 
     @Override
@@ -105,96 +103,94 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         String act = mListener.getEstado();
-        if(act!=null) {
+        if (act != null) {
             btnInicio.setVisibility(View.INVISIBLE);
             btnDetener.setVisibility(View.VISIBLE);
             if (act.equals("peligro")) {
                 ledRojo.setImageResource(R.drawable.rojoprendido);
                 estado.setText(R.string.danger);
-            }else
-                if (act.equals("detenido")) {
-                    ledAmarillo.setImageResource(R.drawable.amarilloprendido);
-                    estado.setText(R.string.stopped);
-                }else
-                    if (act.equals("corriendo")) {
-                    ledVerde.setImageResource(R.drawable.verdeprendido);
-                    estado.setText(R.string.moving);
-                    }else{
-                        btnDetener.setVisibility(View.INVISIBLE);
-                        btnInicio.setVisibility(View.VISIBLE);
-                    }
+            } else if (act.equals("detenido")) {
+                ledAmarillo.setImageResource(R.drawable.amarilloprendido);
+                estado.setText(R.string.stopped);
+            } else if (act.equals("corriendo")) {
+                ledVerde.setImageResource(R.drawable.verdeprendido);
+                estado.setText(R.string.moving);
+            } else {
+                btnDetener.setVisibility(View.INVISIBLE);
+                btnInicio.setVisibility(View.VISIBLE);
+            }
         }
 
-        lblVel.setText(String.valueOf(mListener.getKM())+"KM/H");
+        lblVel.setText(String.valueOf(mListener.getKM()) + "KM/H");
 
 
     }
 
     @Override
     public void onPause() {
-        Log.d("Pause","Pause");
+        Log.d("Pause", "Pause");
         super.onPause();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.d("Start","Start");
+        Log.d("Start", "Start");
 
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d("stop","stop");
+        Log.d("stop", "stop");
 
     }
 
-    public void cambiarBoton(){
+    public void cambiarBoton() {
         btnInicio.setVisibility(View.VISIBLE);
         btnDetener.setVisibility(View.INVISIBLE);
         btnDetener.setEnabled(true);
 
     }
 
-    public void noClickeableDetener(){
+    public void noClickeableDetener() {
         btnDetener.setEnabled(false);
     }
 
-    public void cambiarLblGps(boolean prendido){
-        if(prendido)
+    public void cambiarLblGps(boolean prendido) {
+        if (prendido)
             lblGPS.setImageResource(R.drawable.gpson);
         else
             lblGPS.setImageResource(R.drawable.gpsoff);
     }
 
-    public void actualizarVelocidad(float vel){
-        lblVel.setText(String.valueOf(vel)+"KM/H");
+    public void actualizarVelocidad(float vel) {
+        lblVel.setText(String.valueOf(vel) + "KM/H");
     }
 
-    protected void prenderColorLed(String color){
-        if (color.equals("rojo")){ //Prendo rojo y apago amarillo y verde
+    protected void prenderColorLed(String color) {
+        if (color.equals("rojo")) { //Prendo rojo y apago amarillo y verde
             ledRojo.setImageResource(R.drawable.rojoprendido);
             ledAmarillo.setImageResource(R.drawable.amarillo);
             ledVerde.setImageResource(R.drawable.verde);
             estado.setText(R.string.danger);
             ledPrendido = "rojo";
         }
-        if(color.equals("amarillo")) { //Prendo amarillo
+        if (color.equals("amarillo")) { //Prendo amarillo
             ledRojo.setImageResource(R.drawable.rojo);
             ledAmarillo.setImageResource(R.drawable.amarilloprendido);
             ledVerde.setImageResource(R.drawable.verde);
             estado.setText(R.string.stopped);
             ledPrendido = "amarillo";
         }
-        if (color.equals("verde")){ //Prendo verde
+        if (color.equals("verde")) { //Prendo verde
             ledRojo.setImageResource(R.drawable.rojo);
             ledAmarillo.setImageResource(R.drawable.amarillo);
             ledVerde.setImageResource(R.drawable.verdeprendido);
             estado.setText(R.string.moving);
             ledPrendido = "verde";
         }
-        if (color.equals("nada")){ //Ningun led prendido
+        if (color.equals("nada")) { //Ningun led prendido
             ledRojo.setImageResource(R.drawable.rojo);
             ledAmarillo.setImageResource(R.drawable.amarillo);
             ledVerde.setImageResource(R.drawable.verde);
@@ -203,13 +199,20 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    public interface FuncionesHome{
+    public interface FuncionesHome {
         void comenzarActividad();
+
         void comenzarControlDeVelocidad();
+
         void comenzarControlGPS();
+
         void detenerActividad();
+
         float getKM();
+
         String getEstado();
+
         boolean getGpsActivado();
     }
 }
+

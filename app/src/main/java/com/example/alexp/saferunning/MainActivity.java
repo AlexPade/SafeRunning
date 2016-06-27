@@ -6,26 +6,37 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
 import android.view.Menu;
+import android.view.View;
 import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -35,7 +46,7 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements HomeFragment.FuncionesHome, EstoyBienFragment.estoyBienListener, MapsFragment.FuncionesMaps {
+public class MainActivity extends AppCompatActivity implements HomeFragment.FuncionesHome, EstoyBienFragment.estoyBienListener, MapsFragment.FuncionesMaps, SettingsFragment.FuncionesSettings{
 
     private LocationManager locManager;
     private LocationListener locListener;
@@ -44,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     private HomeFragment homeFragment;
     private String estado;
     private MapsFragment mapsFragment;
+    private SettingsFragment settingsFragment;
+    private Uri contactData;
 
     private float velocidad; //En M/S
     private float km; //Velocidad en KM/H
@@ -56,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     boolean notificationFlag;
     boolean gpsActivado;
     NotificationManager nm;
+    private static final int PICK_CONTACT = 1;
 
 
     @Override
@@ -80,10 +94,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
 
 
         mTabHost.addTab(mTabHost.newTabSpec("ajustes")
-                .setIndicator("", getResources().getDrawable(R.drawable.ajustestab)), HomeFragment.class, null);
-
-
-
+                .setIndicator("", getResources().getDrawable(R.drawable.ajustestab)), SettingsFragment.class, null);
     }
 
 
@@ -524,4 +535,243 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     public boolean getDetenido() {
         return detenido;
     }
+
+
+    public String cadenaContacto() {
+        String temp = "";
+        try {
+            FileInputStream arch = openFileInput("Contactos_emergencia.txt");
+            int c;
+            while ((c = arch.read()) != '#') {
+                if(c!='$'){
+                    if(c=='/')
+                        temp=temp+" ";
+                    else
+                        temp = temp + Character.toString((char) c);
+                }
+            }
+            arch.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException f) {
+            f.printStackTrace();
+        }
+
+        return temp;
+    }
+
+    private String getNumero(){
+        String temp="";
+        try {
+            FileInputStream arch = openFileInput("Contactos_emergencia.txt");
+            int c;
+            while ((c = arch.read()) != '/');
+            while ((c = arch.read()) != '#') {
+                    if((c!='(')&&(c!=')')&&(c!=' ')&&(c!='-'))
+                        temp = temp + Character.toString((char) c);
+            }
+            arch.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (IOException f) {
+            f.printStackTrace();
+        }
+        return temp;
+    }
+
+    private String getPeso(){  //solo debe ser llamado si calculaCalorias es true
+        String toret="";
+        try {int c;
+            FileInputStream arch = openFileInput("Contactos_emergencia.txt");
+            while ((arch.read()) != '#') ;
+            while ((arch.read()) != '/') ;
+            c=arch.read();
+            do{
+                toret+=Character.toString((char)c);
+                c=arch.read();
+            }while(c!= '/');
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (IOException f) {
+            f.printStackTrace();
+        }
+            return toret;
+    }
+
+    private String getEdad(){  //solo debe ser llamado si calculaCalorias es true
+        String toret="";
+        try {int c;
+            FileInputStream arch = openFileInput("Contactos_emergencia.txt");
+            while ((arch.read()) != '#') ;
+            arch.read(); //descarto el signo '$'
+            c=arch.read();
+            toret+=Character.toString((char)c);
+            c=arch.read();
+            toret+=Character.toString((char)c);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (IOException f) {
+            f.printStackTrace();
+        }
+        return toret;
+    }
+
+    private String getSexo(){  //solo debe ser llamado si calculaCalorias es true
+        String toret="";       //retorna m para masculino y f para femenino
+        try {int c;
+            FileInputStream arch = openFileInput("Contactos_emergencia.txt");
+            while ((arch.read()) != '#') ;
+            while ((arch.read()) != '/') ;
+            arch.read(); //descarto el signo '/'
+            while ((arch.read()) != '/') ;
+            c=arch.read();
+            toret+=Character.toString((char)c);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (IOException f) {
+            f.printStackTrace();
+        }
+        return toret;
+    }
+
+    private boolean calculaCalorias(){ //metodo que retorna true si se selecciono la opcion calcular las calorias y false en caso contrario
+        boolean calcula=true;
+        try {
+            FileInputStream arch = openFileInput("Contactos_emergencia.txt");
+            while ((arch.read()) != '#') ;
+            if (arch.read() != '$')
+                calcula = false;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (IOException f) {
+            f.printStackTrace();
+        }
+        return calcula;
+    }
+
+    public void pickAContactNumber() {
+        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        startActivityForResult(intent, PICK_CONTACT);
+    }
+
+    public void ObtenerContacto() throws IOException {
+        String nombre = null;
+        String numero = null;
+        String id = null;
+        int tieneNum = 0;
+
+        // querying contact data store
+        Cursor cursorNom = getContentResolver().query(contactData, null, null, null, null);
+
+        if (cursorNom.moveToFirst()) {
+            // DISPLAY_NAME = The display name for the contact.
+            // HAS_PHONE_NUMBER =   An indicator of whether this contact has at least one phone number.
+            tieneNum = cursorNom.getInt(cursorNom.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+            if (tieneNum == 1) {
+                //Obtengo su nombre a partir de la query cursorNom
+                nombre = cursorNom.getString(cursorNom.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+                // getting contacts ID
+                Cursor cursorID = getContentResolver().query(contactData,
+                        new String[]{ContactsContract.Contacts._ID},
+                        null, null, null);
+                if (cursorID.moveToFirst()) {
+
+                    id = cursorID.getString(cursorID.getColumnIndex(ContactsContract.Contacts._ID));
+                }
+
+                cursorID.close();
+
+                // Using the contact ID now we will get contact phone number
+                Cursor cursorPhone = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                        new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER},
+
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ? AND " +
+                                ContactsContract.CommonDataKinds.Phone.TYPE + " = " +
+                                ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE,
+
+                        new String[]{id},
+                        null);
+
+                if (cursorPhone.moveToFirst()) {
+                    numero = cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                }
+
+                cursorPhone.close();
+
+                String cadena = "$" + nombre + "/" + numero + "#"; //donde / es el separador, $ es el caracter de comienzo y # el de finalizacion
+
+                FileInputStream arch = openFileInput("Contactos_emergencia.txt");
+
+                int c,cant=0;
+                c = arch.read();
+                while (c!=-1) {
+                    if(cant==1)
+                        cadena+=Character.toString((char) c);
+                    if (c == '#')
+                        cant++;
+                    c = arch.read();
+                }
+                arch.close();
+
+                FileOutputStream fos = openFileOutput("Contactos_emergencia.txt", MODE_PRIVATE);
+                fos.write(cadena.getBytes());
+                fos.close();
+            }
+        }
+        cursorNom.close();
+    }
+
+    @Override
+    protected void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
+        if (reqCode == PICK_CONTACT && resultCode == RESULT_OK) {
+            contactData = data.getData();
+
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.READ_CONTACTS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_CONTACTS},
+                        2);
+            } else {
+                try {
+                    ObtenerContacto();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 2: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    try {
+                        ObtenerContacto();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
 }

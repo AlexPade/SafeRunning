@@ -4,9 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SplashActivity"
-    android:layout_gravity="center"
-    android:background="@drawable/splash">
-
-
-
+    android:layout_gravity="center">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/splash"
+        android:id="@+id/fondo"
+        android:visibility="visible">
+    </RelativeLayout>
+    <FrameLayout
+        android:id="@+id/contenedor"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </RelativeLayout>
