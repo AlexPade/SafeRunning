@@ -13,6 +13,16 @@
         android:layout_margin="16dp"
         android:src="@drawable/ic_directions_run_white_24dp" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/detenerActividadBotonFlotante"
+        android:layout_gravity="bottom"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_pan_tool_white_24dp" />
+
     <com.google.android.gms.maps.MapView android:id="@+id/mapview"
         android:layout_width="fill_parent"
         android:layout_height="609dp" />

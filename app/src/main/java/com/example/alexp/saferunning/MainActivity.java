@@ -12,30 +12,28 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
 import android.view.Menu;
 import android.widget.Chronometer;
-
-import com.google.android.gms.identity.intents.Address;
-import com.google.android.gms.maps.model.LatLng;
-
 import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity implements HomeFragment.FuncionesHome, EstoyBienFragment.estoyBienListener, MapsFragment.FuncionesMaps {
 
@@ -521,5 +519,9 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         }
 
         return toReturn;
+    }
+
+    public boolean getDetenido() {
+        return detenido;
     }
 }

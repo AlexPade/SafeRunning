@@ -23,6 +23,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MapsFragment extends Fragment {
 
@@ -30,13 +32,16 @@ public class MapsFragment extends Fragment {
     //ATRIBUTOS
     private MapView mapView;
     private GoogleMap mMap;
+    private FloatingActionButton actividadBoton;
+    private FloatingActionButton detenidoActividadBoton;
+    private FloatingActionButton Boton;
+    private int flagBoton;
     private FuncionesMaps listener;
+    private Timer timer;
 
     private PolylineOptions ruta;
     private boolean tengoPermisos;
-    private boolean centrar;
     private boolean actualizado;
-
 
     //Interface a implementar
     public interface FuncionesMaps{
@@ -47,11 +52,14 @@ public class MapsFragment extends Fragment {
         void comenzarActividad();
         void comenzarControlDeVelocidad();
         Iterator<LatLng> obtenerRuta();
+        boolean getDetenido();
+        void detenerActividad();
+        String getEstado();
+        boolean getGpsActivado();
     }
 
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        FloatingActionButton actividadBoton;
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
 
         //Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_maps, container, false);
@@ -60,18 +68,38 @@ public class MapsFragment extends Fragment {
         mapView = (MapView) v.findViewById(R.id.mapview);
         mapView.onCreate(savedInstanceState);
         tengoPermisos = ContextCompat.checkSelfPermission(this.getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-        centrar = listener.getCentrar();
         actualizado = false;
 
+
+        detenidoActividadBoton = (FloatingActionButton) v.findViewById(R.id.detenerActividadBotonFlotante);
+        detenidoActividadBoton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.detenerActividad();
+                switchingBotones(actividadBoton);
+            }
+        });
         actividadBoton = (FloatingActionButton) v.findViewById(R.id.actividadBotonFlotante);
         actividadBoton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.comenzarActividad();
-                listener.comenzarControlDeVelocidad();
+                if (listener.getGpsActivado()) {
+                    listener.comenzarControlDeVelocidad();
+                    switchingBotones(detenidoActividadBoton);
+                }
             }
         });
-        actividadBoton.show();
+        detenidoActividadBoton.hide();
+        detenidoActividadBoton.setClickable(false);
+        actividadBoton.hide();
+        actividadBoton.setClickable(false);
+
+        obtenerEstadoDelUsuario();
+        Boton.show();
+        Boton.setClickable(true);
+        //Comienza el timer
+        crearConteo();
 
         //Se obtiene el mapa y se lo inicia con ciertas configuraciones
         mapView.getMapAsync(new OnMapReadyCallback() {
@@ -87,15 +115,18 @@ public class MapsFragment extends Fragment {
                 mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                        centrar = false;
+                        listener.setCentrar(false);
+                        Boton.show();
+                        timer.cancel();
+                        crearConteo();
+                        Log.d("MapGragment","mapa clickeado.");
                     }
                 });
 
                 mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                     @Override
                     public boolean onMyLocationButtonClick() {
-                        centrar = true;
+                        listener.setCentrar(true);
                         return false;
                     }
                 });
@@ -111,10 +142,38 @@ public class MapsFragment extends Fragment {
         return v;
     }
 
+    private void switchingBotones(FloatingActionButton btn)
+    {
+        Boton.setClickable(false);
+        Boton.hide();
+        Boton = btn;
+        Boton.setClickable(true);
+        timer.cancel();
+        Boton.show();
+        crearConteo();
+    }
+
+
+    private void obtenerEstadoDelUsuario() {
+        if ((listener.getDetenido() == true && !listener.getEstado().equals("peligro")) || listener.getEstado() == null)
+        {
+            Boton = actividadBoton;
+            flagBoton = 1;
+        }
+        else
+        {
+            Boton = detenidoActividadBoton;
+            flagBoton = 2;
+        }
+        Boton.setClickable(true);
+    }
+
     public void cambioUbicacion(LatLng ubicacion) {
 
-        if (centrar)
+        Log.d("MapsFragment", "Centrar es: "+listener.getCentrar()+".");
+        if (listener.getCentrar() == true)
         {
+            Log.d("MapsFragment", "cambioUbicacion.");
             float zoom = mMap.getCameraPosition().zoom;
             float tilt = mMap.getCameraPosition().tilt;
             float bearing = mMap.getCameraPosition().bearing;
@@ -127,6 +186,27 @@ public class MapsFragment extends Fragment {
             ruta.add(ubicacion);
             mMap.addPolyline(ruta);
         }
+    }
+
+    private void crearConteo()
+    {
+        timer = new Timer();
+        TimerTask conteo = new TimerTask() {
+
+            int inactivo = 0;
+            @Override
+            public void run() {
+                if (inactivo > 4000)
+                {
+                    inactivo = 0;
+                    Boton.hide();
+                    cancel();
+                }
+                else
+                    inactivo++;
+            }
+        };
+        timer.schedule(conteo,0,1);
     }
 
     public boolean estadoActualizado(){
@@ -156,7 +236,6 @@ public class MapsFragment extends Fragment {
     public void onStop() {
         super.onStop();
         listener.setTarget(mMap.getCameraPosition().target);
-        listener.setCentrar(centrar);
         Log.d("MapsFragment","Stop");
     }
 
@@ -168,7 +247,7 @@ public class MapsFragment extends Fragment {
         Log.d("MapsFragment","Resume");
 
         if (mMap != null) {
-            mMap.clear();
+            //mMap.clear();
             ruta = new PolylineOptions().width(10).color(Color.BLUE).geodesic(true);
 
             //Obtengo todas las posiciones
@@ -184,7 +263,9 @@ public class MapsFragment extends Fragment {
                 mMap.addPolyline(ruta);
 
                 //Muevo la camara al lugar del usuario
-                if (centrar) {
+                Log.d("MapsFragment", "Centrar es: "+listener.getCentrar()+".");
+                if (listener.getCentrar() == true) {
+                    Log.d("MapsFragment", "OnResume:cambioUbicacion.");
                     int ultimo = ruta.getPoints().size() - 1;
                     cambiarPosCamara(ruta.getPoints().get(ultimo), mMap.getCameraPosition().zoom, mMap.getCameraPosition().tilt, mMap.getCameraPosition().bearing);
                 }
@@ -202,6 +283,7 @@ public class MapsFragment extends Fragment {
         Log.d("MapsFragment","Pause");
         actualizado = false;
         ruta = null;
+        timer.cancel();
 
     }
 
@@ -209,7 +291,6 @@ public class MapsFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         actualizado = false;
-        centrar = false;
         //mapView.onDestroy();
         ruta = null;
         //mMap = null;
