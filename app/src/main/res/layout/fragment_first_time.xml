@@ -2,42 +2,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeFragment$FirstTimeFragment">
+    tools:context=".HomeFragment$FirstTimeFragment"
+    android:paddingTop="20dp"
+    >
 
     <ImageView
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_marginTop="40dp"
-        android:scaleX="1.7"
-        android:scaleY="1.7"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:src="@drawable/logo_nuevo_blanco"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/logo_nuevo_blanco"
-        />
+        android:id="@+id/imageView"
+        android:paddingBottom="10dp"/>
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/selectContact"
             android:id="@+id/pick"
             android:enabled="true"
-            android:layout_marginTop="216dp"
-            android:layout_gravity="center_vertical"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
+        android:layout_gravity="center_vertical"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/contacto"
+        android:text="contacto"
+        android:layout_below="@+id/pick"
+        android:layout_centerHorizontal="true" />
     <RelativeLayout
         android:layout_width="300dp"
         android:layout_height="25dp"
         android:layout_gravity="center_horizontal"
+        android:id="@+id/relativeLayout"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/relativeLayout">
+        android:layout_alignLeft="@+id/relativeLayout2"
+        android:layout_alignStart="@+id/relativeLayout2">
         <TextView
             android:layout_width="250dp"
             android:layout_height="50dp"
             android:text="@string/calcCalorias"
             android:id="@+id/texto"
+            android:gravity="center_vertical"
             android:layout_alignParentTop="true"
-            android:gravity="center_vertical" />
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
         <CheckBox
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -51,10 +63,9 @@
     <RelativeLayout
         android:layout_width="300dp"
         android:layout_height="200dp"
-        android:layout_below="@+id/relativeLayout"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="35dp"
-        android:id="@+id/relativeLayout2">
+        android:id="@+id/relativeLayout2"
+        android:layout_above="@+id/relativeLayout3"
+        android:layout_centerHorizontal="true">
 
         <TextView
             android:layout_width="50dp"
@@ -162,20 +173,21 @@
         android:layout_width="400dp"
         android:layout_height="50dp"
         android:id="@+id/relativeLayout3"
-        android:layout_below="@+id/relativeLayout2"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:paddingRight="10dp"
+        >
         <TextView
-            android:layout_width="250dp"
-            android:layout_height="50dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:text="@string/ErrorCampos"
             android:textSize="18dp"
             android:gravity="center_vertical"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/listo"
-            android:layout_toStartOf="@+id/listo"
             android:visibility="invisible"
-            android:id="@+id/textError"/>
+            android:id="@+id/textError"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -184,7 +196,8 @@
             android:id="@+id/listo"
             android:layout_gravity="bottom"
             android:src="@drawable/ic_done_white_24dp"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            />
 
         <!--<Button
             android:layout_width="75dp"

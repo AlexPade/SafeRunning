@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                             }
                         });
                         corriendo=false;
-                        while ((i<20)&&(!corriendo)&&(!detenido)){       //Repito mientras velocidad==0 durante 10 segundos
+                        while ((i<60)&&(!corriendo)&&(!detenido)){       //Repito mientras velocidad==0 durante 30 segundos
                             try {
                                 Thread.sleep(500);
                             } catch (InterruptedException e) {
@@ -392,7 +392,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                 presionado=false;
                 int i = 0;
                 Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-                while((!presionado)&&(i<20)) {
+                while((!presionado)&&(i<30)) { //15 segundos de espera para apretar el boton
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException e) {
