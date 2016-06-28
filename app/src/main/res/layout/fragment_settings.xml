@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="30dp"
-        >
+        android:weightSum="1">
         <View
             android:layout_width="match_parent"
             android:layout_height="1dip"
@@ -20,7 +20,7 @@
            android:layout_width="match_parent"
            android:layout_height="25dp"
            android:orientation="horizontal"
-           >
+           android:layout_weight="0.04">
            <TextView
                android:layout_width="150dp"
                android:layout_height="25dp"
@@ -28,21 +28,23 @@
                android:textSize="18dp"
                android:gravity="center_vertical"/>
        </LinearLayout>
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="25dp"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/campo">
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="25dp"
+                android:layout_height="30dp"
                 android:id="@+id/campoContacto"
-                android:text="ninguno"
                 android:gravity="center"
-                android:textSize="14dp"/>
-        </LinearLayout>
+                android:textSize="15dp"
+                />
+        </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
+
             >
             <TextView
                 android:layout_width="match_parent"
@@ -54,7 +56,7 @@
                 android:clickable="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                />
+                android:layout_alignParentTop="true" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -90,4 +92,4 @@
                 />
         </LinearLayout>
     </LinearLayout>
-</FrameLayout>
+</RelativeLayout>
