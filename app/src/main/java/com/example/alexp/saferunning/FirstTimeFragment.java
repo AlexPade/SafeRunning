@@ -52,7 +52,7 @@ public class FirstTimeFragment extends Fragment {
             public void onClick(View v) {
                 mListener.pickAContactNumber();
                 pickAContact.setEnabled(false);
-                listo.setEnabled(true);
+                listo.setVisibility(View.VISIBLE);
             }
         });
         View check = view.findViewById(R.id.check);
