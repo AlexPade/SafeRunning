@@ -423,7 +423,12 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
             }
         }).start();
 
+    }
 
+    public String calcularCalorias(){
+        String toret="";
+
+        return toret;
     }
 
     private void notificacionSMS() {

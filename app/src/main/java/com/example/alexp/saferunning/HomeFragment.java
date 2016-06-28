@@ -219,6 +219,8 @@ public class HomeFragment extends Fragment {
         String getEstado();
 
         boolean getGpsActivado();
+
+        String calcularCalorias();
     }
 
     public void iniciarCronometro(){
