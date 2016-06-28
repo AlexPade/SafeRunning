@@ -3,7 +3,6 @@
     <string name="menu_settings">Settings</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps_fragment">Map</string>
     <string name="edad">Edad: </string>
     <string name="selectContact">Seleccionar contacto</string>
@@ -26,4 +25,17 @@
     <string name="danger">PELIGRO</string>
     <string name="stopped">Detenido</string>
     <string name="moving">En movimiento</string>
+    <string name="abouttitle">DESARROLLADORES</string>
+
+    <string name="help">Para comenzar, presione iniciar actividad y comience su rutina, a los 10 segundos empezara a detectar su movimiento.
+    Si pasa mas de 30 segundos detenido se iniciara una alerta, que podra detener presionando el boton "Estoy bien" para cancelarla.
+    Si no lo presiona, se enviara un SMS al contacto que usted eligio, notificando su ultima posicion conocida.\n \n
+        ATENCION: Utilizar la app al aire libre. En ambientes cerrados podria no funcionar correctamente la deteccion del GPS.</string>
+    <string name="about">
+    -Fredes, Alexis\n\n
+    -Jinkis, Federico\n\n
+    -Pade, Alex</string>
+
+
+
 </resources>

@@ -1,9 +1,11 @@
 package com.example.alexp.saferunning;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -14,7 +16,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.provider.ContactsContract;
@@ -27,7 +28,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
 import android.view.Menu;
-import android.view.View;
+import android.view.MenuItem;
 import android.widget.Chronometer;
 import android.widget.Toast;
 
@@ -37,7 +38,6 @@ import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     private HomeFragment homeFragment;
     private String estado;
     private MapsFragment mapsFragment;
-    private SettingsFragment settingsFragment;
     private Uri contactData;
 
     private float velocidad; //En M/S
@@ -101,6 +100,17 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.action_bar,menu);
+
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.help:
+                abrirDialogHelp();
+                return true;
+
+        }
         return true;
     }
 
@@ -153,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
             }
             locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
         }else{
-            Toast toast = Toast.makeText(getApplicationContext(),"El GPS esta desactivado",Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getApplicationContext(),"El GPS esta desactivado",Toast.LENGTH_SHORT);
             toast.show();
         }
 
@@ -344,10 +354,10 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     @Override
     public void detenerActividad() {
         detenido=true;
-        estado="";
+        //estado="";
         homeFragment.noClickeableDetener();
-        if(homeFragment!=null)
-            homeFragment.prenderColorLed("nada"); //Apago todos los leds
+        //if(homeFragment!=null)
+          //  homeFragment.prenderColorLed("nada"); //Apago todos los leds
         locManager.removeUpdates(locListener);
         setVelocidad(0);
         homeFragment.actualizarVelocidad(getKM());
@@ -363,6 +373,9 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                     @Override
                     public void run() {
                         homeFragment.cambiarBoton();
+                        estado="";
+                        if(homeFragment!=null)
+                            homeFragment.prenderColorLed("nada"); //Apago todos los leds
                     }
                 });
             }
@@ -434,7 +447,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
 
     public void mandarSMS(){
         SmsManager sms = SmsManager.getDefault();
-        String numero="";
+        String numero=getNumero();
         Location loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         String coordenadas=getCoordenadas(loc);
         String direccion=getDireccion(loc);
@@ -443,6 +456,39 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         sms.sendTextMessage(numero,null,mensaje,null,null);
         Toast toast = Toast.makeText(getApplicationContext(),"MENSAJE ENVIADO",Toast.LENGTH_LONG);
         toast.show();
+    }
+
+    private void abrirDialogHelp(){
+        int dialog_message=R.string.help;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(dialog_message);
+        builder.setPositiveButton("ACEPTAR", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    public void abrirDialogoAbout(){
+        int dialog_message=R.string.about;
+        int dialog_title=R.string.abouttitle;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(dialog_message);
+        builder.setTitle(dialog_title);
+        builder.setPositiveButton("ACEPTAR", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 
@@ -663,18 +709,15 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         String id = null;
         int tieneNum = 0;
 
-        // querying contact data store
         Cursor cursorNom = getContentResolver().query(contactData, null, null, null, null);
 
         if (cursorNom.moveToFirst()) {
-            // DISPLAY_NAME = The display name for the contact.
-            // HAS_PHONE_NUMBER =   An indicator of whether this contact has at least one phone number.
+
             tieneNum = cursorNom.getInt(cursorNom.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
             if (tieneNum == 1) {
                 //Obtengo su nombre a partir de la query cursorNom
                 nombre = cursorNom.getString(cursorNom.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-                // getting contacts ID
                 Cursor cursorID = getContentResolver().query(contactData,
                         new String[]{ContactsContract.Contacts._ID},
                         null, null, null);
@@ -685,7 +728,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
 
                 cursorID.close();
 
-                // Using the contact ID now we will get contact phone number
                 Cursor cursorPhone = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                         new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER},
 
@@ -753,7 +795,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case 2: {
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     try {
@@ -763,14 +804,12 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                     }
 
                 } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+
                 }
                 return;
             }
 
-            // other 'case' lines to check for other
-            // permissions this app might request
+
         }
     }
 

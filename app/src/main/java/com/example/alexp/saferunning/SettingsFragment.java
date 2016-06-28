@@ -29,6 +29,7 @@ public class SettingsFragment extends Fragment {
         TextView textoClick= (TextView) view.findViewById(R.id.textoClick);
         final TextView campoContacto=(TextView) view.findViewById(R.id.campoContacto);
         final CheckBox opcionPro=(CheckBox) view.findViewById(R.id.opcionPro);
+        final TextView about= (TextView) view.findViewById(R.id.about);
 
         campoContacto.setText(mListener.cadenaContacto());
         textoClick.setOnClickListener(new View.OnClickListener() {
@@ -46,6 +47,13 @@ public class SettingsFragment extends Fragment {
             }
         }
         );
+
+        about.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.abrirDialogoAbout();
+            }
+        });
 
         return view;
     }
@@ -72,5 +80,6 @@ public class SettingsFragment extends Fragment {
     public interface FuncionesSettings {
         void pickAContactNumber();
         String cadenaContacto();
+        void abrirDialogoAbout();
     }
 }

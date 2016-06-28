@@ -1,5 +1,6 @@
 package com.example.alexp.saferunning;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -46,6 +47,7 @@ public class HomeFragment extends Fragment {
         btnDetener = view.findViewById(R.id.detener);
         lblVel = (TextView) view.findViewById(R.id.vel);
         lblGPS = (ImageView) view.findViewById(R.id.gps);
+
 
         btnInicio.setOnClickListener(new View.OnClickListener() {
             @Override
