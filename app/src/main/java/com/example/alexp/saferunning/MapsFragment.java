@@ -35,9 +35,10 @@ public class MapsFragment extends Fragment {
     private FloatingActionButton actividadBoton;
     private FloatingActionButton detenidoActividadBoton;
     private FloatingActionButton Boton;
-    private int flagBoton;
     private FuncionesMaps listener;
     private Timer timer;
+    private TimerTask conteoOcultar;
+    private TimerTask esperaClickeable;
 
     private PolylineOptions ruta;
     private boolean tengoPermisos;
@@ -70,7 +71,6 @@ public class MapsFragment extends Fragment {
         tengoPermisos = ContextCompat.checkSelfPermission(this.getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         actualizado = false;
 
-
         detenidoActividadBoton = (FloatingActionButton) v.findViewById(R.id.detenerActividadBotonFlotante);
         detenidoActividadBoton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +83,7 @@ public class MapsFragment extends Fragment {
         actividadBoton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                listener.setCentrar(true);
                 listener.comenzarActividad();
                 if (listener.getGpsActivado()) {
                     listener.comenzarControlDeVelocidad();
@@ -98,8 +99,8 @@ public class MapsFragment extends Fragment {
         obtenerEstadoDelUsuario();
         Boton.show();
         Boton.setClickable(true);
-        //Comienza el timer
-        crearConteo();
+        crearTareaConteo();
+        crearConteo(conteoOcultar);
 
         //Se obtiene el mapa y se lo inicia con ciertas configuraciones
         mapView.getMapAsync(new OnMapReadyCallback() {
@@ -117,8 +118,9 @@ public class MapsFragment extends Fragment {
                     public void onMapClick(LatLng latLng) {
                         listener.setCentrar(false);
                         Boton.show();
-                        timer.cancel();
-                        crearConteo();
+                        conteoOcultar.cancel();
+                        crearTareaConteo();
+                        crearConteo(conteoOcultar);
                         Log.d("MapGragment","mapa clickeado.");
                     }
                 });
@@ -142,29 +144,57 @@ public class MapsFragment extends Fragment {
         return v;
     }
 
-    private void switchingBotones(FloatingActionButton btn)
-    {
+    private void switchingBotones(FloatingActionButton btn) {
         Boton.setClickable(false);
         Boton.hide();
         Boton = btn;
-        Boton.setClickable(true);
-        timer.cancel();
+        conteoOcultar.cancel();
+        crearTareaConteo();
+        crearConteo(conteoOcultar);
         Boton.show();
-        crearConteo();
+        crearTareaEspera();
+        crearConteo(esperaClickeable);
     }
 
+    private void crearTareaConteo(){
+        conteoOcultar = new TimerTask() {
+            int inactivo = 0;
+            @Override
+            public void run() {
+                if (inactivo > 3499)
+                {
+                    inactivo = 0;
+                    Boton.hide();
+                    cancel();
+                }
+                else
+                    inactivo++;
+            }
+        };
+    }
+
+    private void crearTareaEspera(){
+        esperaClickeable = new TimerTask() {
+            int inactivo = 0;
+            @Override
+            public void run() {
+                if (inactivo > 2499)
+                {
+                    inactivo = 0;
+                    Boton.setClickable(true);
+                    cancel();
+                }
+                else
+                    inactivo++;
+            }
+        };
+    }
 
     private void obtenerEstadoDelUsuario() {
         if ((listener.getDetenido() == true && !listener.getEstado().equals("peligro")) || listener.getEstado() == null)
-        {
             Boton = actividadBoton;
-            flagBoton = 1;
-        }
         else
-        {
             Boton = detenidoActividadBoton;
-            flagBoton = 2;
-        }
         Boton.setClickable(true);
     }
 
@@ -181,32 +211,29 @@ public class MapsFragment extends Fragment {
         }
 
         mMap.clear();
-        if ((ruta != null) && (ruta.getPoints().size() > 0)) {
+        boolean rutaNoNull = ruta != null;
+        boolean existeRuta = ruta.getPoints().size() > 0;
+
+        //Busco si tengo que actualizar o no la ruta
+        if (rutaNoNull && !existeRuta) {
+            Iterator<LatLng> it = listener.obtenerRuta();
+            while (it.hasNext())
+                ruta.add(it.next());
+            //Vuelvo a chequear despues de actualizar
+            existeRuta = ruta.getPoints().size() > 0;
+        }
+
+        if (rutaNoNull && existeRuta) {
             agregarEtiqueta(ruta.getPoints().get(0), "Comienzo");
             ruta.add(ubicacion);
             mMap.addPolyline(ruta);
         }
     }
 
-    private void crearConteo()
-    {
-        timer = new Timer();
-        TimerTask conteo = new TimerTask() {
-
-            int inactivo = 0;
-            @Override
-            public void run() {
-                if (inactivo > 4000)
-                {
-                    inactivo = 0;
-                    Boton.hide();
-                    cancel();
-                }
-                else
-                    inactivo++;
-            }
-        };
-        timer.schedule(conteo,0,1);
+    private void crearConteo(TimerTask tarea) {
+        if (timer==null)
+            timer = new Timer();
+        timer.schedule(tarea,0,1);
     }
 
     public boolean estadoActualizado(){
@@ -247,7 +274,6 @@ public class MapsFragment extends Fragment {
         Log.d("MapsFragment","Resume");
 
         if (mMap != null) {
-            //mMap.clear();
             ruta = new PolylineOptions().width(10).color(Color.BLUE).geodesic(true);
 
             //Obtengo todas las posiciones
@@ -283,7 +309,7 @@ public class MapsFragment extends Fragment {
         Log.d("MapsFragment","Pause");
         actualizado = false;
         ruta = null;
-        timer.cancel();
+        timer = null;
 
     }
 
@@ -293,6 +319,7 @@ public class MapsFragment extends Fragment {
         actualizado = false;
         //mapView.onDestroy();
         ruta = null;
+        timer = null;
         //mMap = null;
         //actividadBoton = null;
     }

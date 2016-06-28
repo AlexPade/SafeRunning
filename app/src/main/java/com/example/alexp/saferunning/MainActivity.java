@@ -29,15 +29,14 @@ import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -61,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     private float km; //Velocidad en KM/H
     private LatLng target;
     private boolean centrarMapa;
-    private Chronometer cronometro;
 
     boolean detenido;
     boolean presionado;
@@ -78,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         setContentView(R.layout.activity_main);
         posiciones = new ArrayList<LatLng>();
         centrarMapa = true;
-
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
@@ -170,6 +167,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     }
 
     public void comenzarControlDeVelocidad(){
+        //TODO tema cronometro
+        homeFragment.iniciarCronometro();
         Thread t;
         t=new Thread(new Runnable() {
 
@@ -380,6 +379,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                 });
             }
         };
+        //TODO tema cronometro
+        homeFragment.detenerCronometro();
         Timer timer = new Timer();
         timer.schedule(task,2000);
     }

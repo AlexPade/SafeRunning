@@ -8,9 +8,11 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginTop="40dp"
+        android:scaleX="1.7"
+        android:scaleY="1.7"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/logo_gif"
+        android:src="@drawable/logo_nuevo_blanco"
         />
     <Button
             android:layout_width="wrap_content"
@@ -174,7 +176,16 @@
             android:layout_toStartOf="@+id/listo"
             android:visibility="invisible"
             android:id="@+id/textError"/>
-        <Button
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/listo"
+            android:layout_gravity="bottom"
+            android:src="@drawable/ic_done_white_24dp" />
+
+        <!--<Button
             android:layout_width="75dp"
             android:layout_height="50dp"
             android:id="@+id/listo"
@@ -182,7 +193,8 @@
             android:text="@string/Listo"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true" />-->
+
     </RelativeLayout>
 </RelativeLayout>
 

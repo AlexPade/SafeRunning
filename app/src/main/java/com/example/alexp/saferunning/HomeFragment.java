@@ -1,13 +1,14 @@
 package com.example.alexp.saferunning;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ public class HomeFragment extends Fragment {
     private TextView estado;
     private ImageView lblGPS;
     private String ledPrendido = "apagados";
+    private Chronometer cronometro;
 
     private FuncionesHome mListener;
 
@@ -47,6 +49,8 @@ public class HomeFragment extends Fragment {
         btnDetener = view.findViewById(R.id.detener);
         lblVel = (TextView) view.findViewById(R.id.vel);
         lblGPS = (ImageView) view.findViewById(R.id.gps);
+        cronometro = (Chronometer) view.findViewById(R.id.cronometro);
+        cronometro.setBase(SystemClock.elapsedRealtime());
 
 
         btnInicio.setOnClickListener(new View.OnClickListener() {
@@ -215,6 +219,15 @@ public class HomeFragment extends Fragment {
         String getEstado();
 
         boolean getGpsActivado();
+    }
+
+    public void iniciarCronometro(){
+        cronometro.setBase(SystemClock.elapsedRealtime());
+        cronometro.start();
+    }
+
+    public void detenerCronometro(){
+        cronometro.stop();
     }
 }
 
