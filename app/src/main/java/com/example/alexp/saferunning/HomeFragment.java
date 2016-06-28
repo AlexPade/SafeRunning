@@ -2,7 +2,6 @@ package com.example.alexp.saferunning;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +21,7 @@ public class HomeFragment extends Fragment {
     private ImageView ledVerde;
     private TextView estado;
     private ImageView lblGPS;
+    private TextView lblCro;
     private String ledPrendido = "apagados";
     private Chronometer cronometro;
 
@@ -49,9 +49,9 @@ public class HomeFragment extends Fragment {
         btnDetener = view.findViewById(R.id.detener);
         lblVel = (TextView) view.findViewById(R.id.vel);
         lblGPS = (ImageView) view.findViewById(R.id.gps);
-        cronometro = (Chronometer) view.findViewById(R.id.cronometro);
-        cronometro.setBase(SystemClock.elapsedRealtime());
-
+        lblCro = (TextView) view.findViewById(R.id.cro);
+        if (lblCro.getText().length()<1)
+            lblCro.setText(mListener.getTiempo());
 
         btnInicio.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,6 +174,37 @@ public class HomeFragment extends Fragment {
         lblVel.setText(String.valueOf(vel) + "KM/H");
     }
 
+    public void actualizarTiempo(int horas, int minutos, int segundos) {
+        String hs;
+        String min;
+        String seg;
+
+        //Parseo HS
+        if (horas<10)
+            hs="0"+horas;
+        else
+            hs=""+horas;
+        //Parseo MIN
+        if (minutos<10)
+            min = "0"+minutos;
+        else
+            min = ""+minutos;
+        //Parseo SEG
+        if (segundos<10)
+            seg = "0"+segundos;
+        else
+            seg = ""+segundos;
+
+        String tiempo;
+        if (horas<1)
+            tiempo = ""+min+":"+seg;
+        else
+            tiempo = ""+hs+":"+min+":"+seg;
+
+        lblCro.setText(tiempo);
+        mListener.setTiempo(tiempo);
+    }
+
     protected void prenderColorLed(String color) {
         if (color.equals("rojo")) { //Prendo rojo y apago amarillo y verde
             ledRojo.setImageResource(R.drawable.rojoprendido);
@@ -221,15 +252,12 @@ public class HomeFragment extends Fragment {
         boolean getGpsActivado();
 
         String calcularCalorias();
-    }
 
-    public void iniciarCronometro(){
-        cronometro.setBase(SystemClock.elapsedRealtime());
-        cronometro.start();
-    }
+        boolean getDetenido();
 
-    public void detenerCronometro(){
-        cronometro.stop();
+        void setTiempo(String s);
+
+        String getTiempo();
     }
 }
 

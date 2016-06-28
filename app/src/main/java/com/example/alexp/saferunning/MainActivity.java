@@ -50,6 +50,10 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     private LocationManager locManager;
     private LocationListener locListener;
     private ArrayList<LatLng> posiciones;
+    private Timer reloj;
+    private double distancia;
+    private String tiempo;
+    private int tiempoNro;
 
     private HomeFragment homeFragment;
     private String estado;
@@ -76,6 +80,9 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         setContentView(R.layout.activity_main);
         posiciones = new ArrayList<LatLng>();
         centrarMapa = true;
+        distancia = 0;
+        tiempo = "00:00";
+        tiempoNro = 0;
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
@@ -122,6 +129,10 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                 public void onLocationChanged(Location location) {
                     LatLng ubicacion = new LatLng(location.getLatitude(), location.getLongitude());
                     posiciones.add(ubicacion);
+                    if (posiciones.size()>2) {
+                        LatLng ultimoPunto = posiciones.get(posiciones.size() - 1);
+                        distancia = distancia + getDistance(ubicacion.latitude,ubicacion.longitude,ultimoPunto.latitude,ultimoPunto.longitude);
+                    }
                     posicion(location);
 
                     mapsFragment = (MapsFragment) getSupportFragmentManager().findFragmentByTag("mapa");
@@ -167,8 +178,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     }
 
     public void comenzarControlDeVelocidad(){
-        //TODO tema cronometro
-        homeFragment.iniciarCronometro();
         Thread t;
         t=new Thread(new Runnable() {
 
@@ -264,6 +273,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
             }
         });
         t.start();
+        comenzarReloj();
     }
 
     private void mandarNotificacion(){
@@ -379,8 +389,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                 });
             }
         };
-        //TODO tema cronometro
-        homeFragment.detenerCronometro();
+        reloj.cancel();
         Timer timer = new Timer();
         timer.schedule(task,2000);
     }
@@ -549,6 +558,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
             notificationFlag=false;
         }
     }
+
     public Iterator<LatLng> obtenerRuta(){
         return posiciones.iterator();
     }
@@ -586,6 +596,54 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
 
     public boolean getDetenido() {
         return detenido;
+    }
+
+    private void comenzarReloj() {
+        reloj = new Timer();
+        TimerTask tarea = new TimerTask() {
+
+            int segundos = 0;
+            int minutos = 0;
+            int horas = 0;
+            //HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
+            @Override
+            public void run() {
+                segundos++;
+                if (segundos>59)
+                {
+                    segundos = 0;
+                    tiempoNro++; //Usado para calcular calorias
+                    minutos++;
+                    if (minutos>59) {
+                        minutos = 0;
+                        horas++;
+                    }
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(homeFragment!=null) {
+                            homeFragment.actualizarTiempo(horas,minutos,segundos);
+                        }
+                    }
+                });
+
+
+            }
+        };
+        reloj.schedule(tarea,0,1000);
+    }
+
+    public double getDistance(double lat1,double lon1, double lat2, double lon2){
+        int Radius = 6371000; //Radio de la tierra
+
+        double dLat = Math.toRadians(lat2-lat1);
+        double dLon = Math.toRadians(lon2-lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon /2) * Math.sin(dLon/2);
+        double c = 2 * Math.asin(Math.sqrt(a));
+        return (Radius * c);
+
     }
 
 
@@ -687,6 +745,18 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
             f.printStackTrace();
         }
         return toret;
+    }
+
+    public String getTiempo(){
+        return tiempo;
+    }
+
+    public int getTiempoNro(){
+        return tiempoNro;
+    }
+
+    public void setTiempo(String s){
+        tiempo = s;
     }
 
     private boolean calculaCalorias(){ //metodo que retorna true si se selecciono la opcion calcular las calorias y false en caso contrario
