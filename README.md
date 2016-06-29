@@ -6,7 +6,9 @@ Entrega 28 de Junio de 2016 --Version Final--
 Integrantes:
 
   -Fredes, Alexis
+  
   -Jinkis, Federico
+  
   -Pade, Alex
   
 
