@@ -20,6 +20,7 @@ public class HomeFragment extends Fragment {
     private ImageView ledAmarillo;
     private ImageView ledVerde;
     private TextView estado;
+    private TextView calorias;
     private ImageView lblGPS;
     private TextView lblCro;
     private String ledPrendido = "apagados";
@@ -44,6 +45,7 @@ public class HomeFragment extends Fragment {
         ledAmarillo = (ImageView) view.findViewById(R.id.ledAmarillo);
         ledVerde = (ImageView) view.findViewById(R.id.ledVerde);
         estado = (TextView) view.findViewById(R.id.estado);
+        calorias = (TextView) view.findViewById(R.id.calorias);
 
         btnInicio = view.findViewById(R.id.inicio);
         btnDetener = view.findViewById(R.id.detener);
@@ -61,6 +63,7 @@ public class HomeFragment extends Fragment {
                     mListener.comenzarControlDeVelocidad();
                     btnInicio.setVisibility(View.INVISIBLE);
                     btnDetener.setVisibility(View.VISIBLE);
+                    calorias.setVisibility(View.INVISIBLE);
                 }
 
             }
@@ -70,7 +73,10 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mListener.detenerActividad();
-
+                if(mListener.boolCalculaCalorias()){
+                    calorias.setVisibility(View.VISIBLE);
+                    calorias.setText(mListener.calcularCalorias()+" Calorias");
+                }
             }
         });
 
@@ -124,6 +130,8 @@ public class HomeFragment extends Fragment {
             } else {
                 btnDetener.setVisibility(View.INVISIBLE);
                 btnInicio.setVisibility(View.VISIBLE);
+                calorias.setVisibility(View.VISIBLE);
+                calorias.setText(mListener.calcularCalorias()+" Calorias");
             }
         }
 

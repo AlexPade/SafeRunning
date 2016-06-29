@@ -15,6 +15,7 @@ import android.widget.Toast;
 public class SettingsFragment extends Fragment {
 
     private FuncionesSettings mListener;
+    private TextView campoContacto;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -27,7 +28,7 @@ public class SettingsFragment extends Fragment {
         View view=inflater.inflate(R.layout.fragment_settings, container, false);
 
         TextView textoClick= (TextView) view.findViewById(R.id.textoClick);
-        final TextView campoContacto=(TextView) view.findViewById(R.id.campoContacto);
+        campoContacto=(TextView) view.findViewById(R.id.campoContacto);
         final CheckBox opcionPro=(CheckBox) view.findViewById(R.id.opcionPro);
         final TextView about= (TextView) view.findViewById(R.id.about);
 
@@ -76,6 +77,9 @@ public class SettingsFragment extends Fragment {
         mListener = null;
     }
 
+    public void actualizarContacto(){
+        campoContacto.setText(mListener.cadenaContacto());
+    }
 
     public interface FuncionesSettings {
         void pickAContactNumber();

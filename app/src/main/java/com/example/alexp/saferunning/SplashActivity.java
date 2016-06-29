@@ -30,7 +30,7 @@ public class SplashActivity extends AppCompatActivity implements FirstTimeFragme
     private static final long SPLASH_SCREEN_DELAY = 3000;
     private Uri contactData;
     private static final int PICK_CONTACT = 1;
-
+    private FirstTimeFragment firstTimeFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +52,7 @@ public class SplashActivity extends AppCompatActivity implements FirstTimeFragme
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 //Paso 3: Crear un nuevo fragmento y añadirlo
                 FirstTimeFragment firstTimeFragment = new FirstTimeFragment();
+
                 transaction.add(R.id.contenedor, firstTimeFragment);
                 //Paso 4: Confirmar el cambio
                 transaction.commit();
@@ -83,8 +84,7 @@ public class SplashActivity extends AppCompatActivity implements FirstTimeFragme
         Cursor cursorNom = getContentResolver().query(contactData, null, null, null, null);
 
         if (cursorNom.moveToFirst()) {
-            // DISPLAY_NAME = The display name for the contact.
-            // HAS_PHONE_NUMBER =   An indicator of whether this contact has at least one phone number.
+
             tieneNum = cursorNom.getInt(cursorNom.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
             if (tieneNum == 1) {
                 //Obtengo su nombre a partir de la query cursorNom
@@ -120,6 +120,8 @@ public class SplashActivity extends AppCompatActivity implements FirstTimeFragme
 
                 String cadena = "$" + nombre + "/" + numero + "#"; //donde / es el separador, $ es el caracter de comienzo y # el de finalizacion
 
+                firstTimeFragment = (FirstTimeFragment) getSupportFragmentManager().findFragmentById(R.id.contenedor);
+                firstTimeFragment.mostrarBoton();
                 FileOutputStream fos = openFileOutput("Contactos_emergencia.txt", MODE_PRIVATE);
                 fos.write(cadena.getBytes());
                 fos.close();

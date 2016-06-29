@@ -18,6 +18,7 @@ public class FirstTimeFragment extends Fragment {
 
     private FuncionesFirstTime mListener;
     private TextView textView;
+    private View listo;
 
     public FirstTimeFragment() {
         // Required empty public constructor
@@ -36,7 +37,7 @@ public class FirstTimeFragment extends Fragment {
         final boolean[] checked = new boolean[1];
         checked[0]=false;
         final View pickAContact= view.findViewById(R.id.pick);
-        final View listo=view.findViewById(R.id.listo);
+        listo=view.findViewById(R.id.listo);
         final EditText edit1=(EditText)view.findViewById(R.id.edit1);
         final EditText edit2=(EditText)view.findViewById(R.id.edit2);
         final View tv5=view.findViewById(R.id.tv5);
@@ -52,8 +53,7 @@ public class FirstTimeFragment extends Fragment {
             public void onClick(View v) {
                 mListener.pickAContactNumber();
                // if(mListener.fileExists(FirstTimeFragment.this.getContext(),"Contactos_emergencia.txt")){
-                pickAContact.setEnabled(false);
-                listo.setVisibility(View.VISIBLE);
+
               //  }
             }
         });
@@ -142,6 +142,10 @@ public class FirstTimeFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void mostrarBoton(){
+        listo.setVisibility(View.VISIBLE);
     }
 
     public interface FuncionesFirstTime{

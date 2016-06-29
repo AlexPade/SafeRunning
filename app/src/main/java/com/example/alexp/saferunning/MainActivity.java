@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     private HomeFragment homeFragment;
     private String estado;
     private MapsFragment mapsFragment;
+    private SettingsFragment settingsFragment;
     private Uri contactData;
 
     private float velocidad; //En M/S
@@ -839,6 +840,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
 
                 String cadena = "$" + nombre + "/" + numero + "#"; //donde / es el separador, $ es el caracter de comienzo y # el de finalizacion
 
+
+
                 FileInputStream arch = openFileInput("Contactos_emergencia.txt");
 
                 int c,cant=0;
@@ -855,6 +858,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                 FileOutputStream fos = openFileOutput("Contactos_emergencia.txt", MODE_PRIVATE);
                 fos.write(cadena.getBytes());
                 fos.close();
+                settingsFragment = (SettingsFragment) getSupportFragmentManager().findFragmentByTag("ajustes");
+                settingsFragment.actualizarContacto();
             }
         }
         cursorNom.close();

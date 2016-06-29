@@ -6,6 +6,7 @@
     android:paddingTop="20dp"
     android:paddingRight="10dp"
     android:paddingBottom="10dp"
+    android:id="@+id/first"
     >
 
     <android.support.design.widget.FloatingActionButton
