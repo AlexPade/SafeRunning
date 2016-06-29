@@ -1,6 +1,15 @@
 # SafeRunning
 Proyecto final de la materia Desarrollo de aplicaciones Android sensibles al contexto
 
+Entrega 28 de Junio de 2016 --Version Final--
+
+Integrantes:
+
+  -Fredes, Alexis
+  -Jinkis, Federico
+  -Pade, Alex
+  
+
 Entrega 22 de Junio de 2016 --Version Beta--
 
 Falta agregar a la version final del proyecto:
