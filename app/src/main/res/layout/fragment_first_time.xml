@@ -196,26 +196,6 @@
             android:id="@+id/textError"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
-        <!-- <android.support.design.widget.FloatingActionButton
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_alignParentRight="true"
-             android:layout_alignParentBottom="true"
-             android:id="@+id/listo"
-             android:layout_gravity="bottom"
-             android:src="@drawable/ic_done_white_24dp"
-             android:visibility="gone"
-             />-->
-
-         <!--<Button
-             android:layout_width="75dp"
-             android:layout_height="50dp"
-             android:id="@+id/listo"
-             android:enabled="false"
-             android:text="@string/Listo"
-             android:layout_alignParentTop="true"
-             android:layout_alignParentRight="true"
-             android:layout_alignParentEnd="true" />-->
 
     </RelativeLayout>
 </RelativeLayout>

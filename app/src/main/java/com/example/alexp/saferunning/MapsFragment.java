@@ -320,8 +320,6 @@ public class MapsFragment extends Fragment {
         //mapView.onDestroy();
         ruta = null;
         timer = null;
-        //mMap = null;
-        //actividadBoton = null;
     }
 
     @Override

@@ -364,10 +364,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
     @Override
     public void detenerActividad() {
         detenido=true;
-        //estado="";
         homeFragment.noClickeableDetener();
-        //if(homeFragment!=null)
-          //  homeFragment.prenderColorLed("nada"); //Apago todos los leds
         locManager.removeUpdates(locListener);
         setVelocidad(0);
         homeFragment.actualizarVelocidad(getKM());
@@ -705,6 +702,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
             bmr=(9.56*peso)+(1.85*altura)-(4.68*edad)+655;
         }
         resul=(bmr/24)*met * tiempo;
+        resul=roundTwoDecimals((float)resul);
         toret=String.valueOf(resul);
         return toret;
     }
@@ -901,10 +899,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                         e.printStackTrace();
                     }
 
-                } else {
-
                 }
-                return;
             }
 
 

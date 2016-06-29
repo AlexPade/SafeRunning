@@ -37,7 +37,6 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mListener.pickAContactNumber();
-                //campoContacto.setText(mListener.cadenaContacto());
             }
         });
         opcionPro.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

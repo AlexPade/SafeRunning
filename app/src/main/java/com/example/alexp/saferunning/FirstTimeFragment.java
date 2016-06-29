@@ -52,9 +52,6 @@ public class FirstTimeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mListener.pickAContactNumber();
-               // if(mListener.fileExists(FirstTimeFragment.this.getContext(),"Contactos_emergencia.txt")){
-
-              //  }
             }
         });
         View check = view.findViewById(R.id.check);
