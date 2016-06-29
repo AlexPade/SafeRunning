@@ -434,11 +434,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
 
     }
 
-    public String calcularCalorias(){
-        String toret="";
-
-        return toret;
-    }
 
     private void notificacionSMS() {
         nm.cancel(1); //Cancelo la notificacion de alerta, para enviar una notificacion de mensaje enviado.
@@ -689,6 +684,30 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         return temp;
     }
 
+    public String calcularCalorias(){
+        String toret;
+        double bmr;                      //Basal Metabolic Rate
+        int met=11;                     //metabolic equivalent of task
+        double altura;
+        String sexo=getSexo();          //m=masculino, f=femenino
+        int peso=Integer.parseInt(getPeso());
+        int tiempo=getTiempoNro();         //tiempo en minutos
+        int edad=Integer.parseInt(getEdad());
+        double resul;
+
+        if(sexo.equals("m")){
+            altura=174.5;
+            bmr=(13.75*peso)+(5*altura)-(6.76*edad)+66;
+        }
+        else{
+            altura=162.77;
+            bmr=(9.56*peso)+(1.85*altura)-(4.68*edad)+655;
+        }
+        resul=(bmr/24)*met * tiempo;
+        toret=String.valueOf(resul);
+        return toret;
+    }
+
     private String getPeso(){  //solo debe ser llamado si calculaCalorias es true
         String toret="";
         try {int c;
@@ -757,7 +776,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         tiempo = s;
     }
 
-    private boolean calculaCalorias(){ //metodo que retorna true si se selecciono la opcion calcular las calorias y false en caso contrario
+    public boolean boolCalculaCalorias(){ //metodo que retorna true si se selecciono la opcion calcular las calorias y false en caso contrario
         boolean calcula=true;
         try {
             FileInputStream arch = openFileInput("Contactos_emergencia.txt");

@@ -51,8 +51,10 @@ public class FirstTimeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mListener.pickAContactNumber();
+               // if(mListener.fileExists(FirstTimeFragment.this.getContext(),"Contactos_emergencia.txt")){
                 pickAContact.setEnabled(false);
                 listo.setVisibility(View.VISIBLE);
+              //  }
             }
         });
         View check = view.findViewById(R.id.check);
@@ -149,5 +151,6 @@ public class FirstTimeFragment extends Fragment {
         boolean controlCampos(String campoEdad, String campoPeso);
         void datosCaloriasEnArchivo(String edad, String peso, String sexo);
         SplashActivity getActividad();
+        boolean fileExists(Context context, String filename);
     }
 }

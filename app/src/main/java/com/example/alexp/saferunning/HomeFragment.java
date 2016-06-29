@@ -253,6 +253,8 @@ public class HomeFragment extends Fragment {
 
         String calcularCalorias();
 
+        boolean boolCalculaCalorias();
+
         boolean getDetenido();
 
         void setTiempo(String s);
