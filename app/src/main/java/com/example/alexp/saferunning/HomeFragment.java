@@ -128,8 +128,10 @@ public class HomeFragment extends Fragment {
             } else {
                 btnDetener.setVisibility(View.INVISIBLE);
                 btnInicio.setVisibility(View.VISIBLE);
-                calorias.setVisibility(View.VISIBLE);
-                calorias.setText(mListener.calcularCalorias()+" Calorias");
+                if(mListener.boolCalculaCalorias()){
+                    calorias.setVisibility(View.VISIBLE);
+                    calorias.setText(mListener.calcularCalorias()+" Calorias");
+                }
             }
         }
 
