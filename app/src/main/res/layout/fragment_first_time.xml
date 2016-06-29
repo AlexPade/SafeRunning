@@ -15,6 +15,7 @@
         android:layout_gravity="bottom"
         android:src="@drawable/ic_done_white_24dp"
         android:visibility="gone"
+
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
