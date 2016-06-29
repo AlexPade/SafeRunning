@@ -602,12 +602,12 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
         reloj = new Timer();
         TimerTask tarea = new TimerTask() {
 
-            int segundos = 0;
+            int segundos = -1;
             int minutos = 0;
             int horas = 0;
-            //HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
             @Override
             public void run() {
+
                 segundos++;
                 if (segundos>59)
                 {
@@ -628,8 +628,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Func
                         }
                     }
                 });
-
-
             }
         };
         reloj.schedule(tarea,0,1000);
